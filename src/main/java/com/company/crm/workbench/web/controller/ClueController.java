@@ -10,8 +10,11 @@ import com.company.crm.utils.UUIDUtil;
 import com.company.crm.vo.PaginationVo;
 import com.company.crm.workbench.domain.Activity;
 import com.company.crm.workbench.domain.ActivityRemark;
+import com.company.crm.workbench.domain.Clue;
 import com.company.crm.workbench.service.ActivityService;
+import com.company.crm.workbench.service.ClueService;
 import com.company.crm.workbench.service.impl.ActivityServiceImpl;
+import com.company.crm.workbench.service.impl.ClueServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -33,11 +36,117 @@ public class ClueController extends HttpServlet {
 
             getUserList(request,response);
 
-        } else if("/workbench/clue/xxx.do".equals(path)) {
+        } else if("/workbench/clue/save.do".equals(path)) {
 
-            //xxx(request, response);
+            save(request, response);
+
+        }else if("/workbench/clue/detail.do".equals(path)) {
+
+            detail(request, response);
+
+        }else if("/workbench/clue/getActivityListByClueId.do".equals(path)) {
+
+            getActivityListByClueId(request, response);
+
+        }else if("/workbench/clue/unbund.do".equals(path)) {
+
+            unbund(request, response);
 
         }
+    }
+
+    private void unbund(HttpServletRequest request, HttpServletResponse response) {
+
+        System.out.println("执行解除关联操作");
+
+        String id = request.getParameter("id");
+
+        ClueService cs = (ClueService) ServiceFactory.getService(new ClueServiceImpl());
+
+        Boolean flag = cs.unbund(id);
+
+        PrintJson.printJsonFlag(response, flag);
+
+    }
+
+    private void getActivityListByClueId(HttpServletRequest request, HttpServletResponse response) {
+
+        System.out.println("根据线索id查询关联的市场活动列表");
+
+        String clueId = request.getParameter("clueId");
+
+        ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        List<Activity> aList = as.getActivityListByClueId(clueId);
+
+        PrintJson.printJsonObj(response, aList);
+
+    }
+
+    private void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        System.out.println("跳转到线索详细信息页");
+
+        String id = request.getParameter("id");
+
+        ClueService cs = (ClueService) ServiceFactory.getService(new ClueServiceImpl());
+
+        Clue c = cs.detail(id);
+
+        request.setAttribute("c",c);
+        request.getRequestDispatcher("/workbench/clue/detail.jsp").forward(request, response);
+
+
+    }
+
+    private void save(HttpServletRequest request, HttpServletResponse response) {
+
+        System.out.println("执行线索的添加操作");
+
+        String id = UUIDUtil.getUUID();
+        String fullname = request.getParameter("fullname");
+        String appellation = request.getParameter("appellation");
+        String owner = request.getParameter("owner");
+        String company = request.getParameter("company");
+        String job = request.getParameter("job");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+        String website = request.getParameter("website");
+        String mphone = request.getParameter("mphone");
+        String state = request.getParameter("state");
+        String source = request.getParameter("source");
+        String createTime = DateTimeUtil.getSysTime();
+        String createBy = ((User)request.getSession().getAttribute("user")).getName();
+        String description = request.getParameter("description");
+        String contactSummary = request.getParameter("contactSummary");
+        String nextContactTime = request.getParameter("nextContactTime");
+        String address = request.getParameter("address");
+
+        Clue c = new Clue();
+        c.setId(id);
+        c.setFullname(fullname);
+        c.setAppellation(appellation);
+        c.setOwner(owner);
+        c.setCompany(company);
+        c.setJob(job);
+        c.setEmail(email);
+        c.setPhone(phone);
+        c.setWebsite(website);
+        c.setMphone(mphone);
+        c.setState(state);
+        c.setSource(source);
+        c.setCreateTime(createTime);
+        c.setCreateBy(createBy);
+        c.setDescription(description);
+        c.setContactSummary(contactSummary);
+        c.setNextContactTime(nextContactTime);
+        c.setAddress(address);
+
+        ClueService cs = (ClueService) ServiceFactory.getService(new ClueServiceImpl());
+
+        boolean flag = cs.save(c);
+
+        PrintJson.printJsonFlag(response, flag);
     }
 
     private void getUserList(HttpServletRequest request, HttpServletResponse response) {

@@ -4,6 +4,6 @@ import com.company.crm.workbench.domain.ClueActivityRelation;
 
 public interface ClueActivityRelationDao {
 
-	
 
+    int unbund(String id);
 }

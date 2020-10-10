@@ -9,7 +9,9 @@
 </head>
 <body>
 
+<%--ajax--%>
 $.ajax({
+
     url:"",
     data:{},
     type:"",
@@ -17,10 +19,22 @@ $.ajax({
     success:function (data) {
 
     }
+
 })
 
-//String createTime = DateTimeUtil.getSysTime();
+<%--创建时间、创建人--%>
+String createTime = DateTimeUtil.getSysTime();
 String createBy = ((User)request.getSession().getAttribute("user")).getName();
+
+<%--日期插件--%>
+$(".time").datetimepicker({
+minView: "month",
+language:  'zh-CN',
+format: 'yyyy-mm-dd',
+autoclose: true,
+todayBtn: true,
+pickerPosition: "bottom-left"
+});
 
 </body>
 </html>
