@@ -1,3 +1,5 @@
+package com.company.settings.test;
+
 import com.company.crm.utils.DateTimeUtil;
 import com.company.crm.utils.MD5Util;
 

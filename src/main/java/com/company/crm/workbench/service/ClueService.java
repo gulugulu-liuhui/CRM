@@ -1,6 +1,7 @@
 package com.company.crm.workbench.service;
 
 import com.company.crm.workbench.domain.Clue;
+import com.company.crm.workbench.domain.Tran;
 
 public interface ClueService {
     boolean save(Clue c);
@@ -10,4 +11,6 @@ public interface ClueService {
     Boolean unbund(String id);
 
     Boolean bund(String cid, String[] aids);
+
+    boolean convert(String clueId, Tran t, String createBy);
 }
