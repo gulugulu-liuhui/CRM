@@ -11,6 +11,8 @@ import com.company.crm.workbench.domain.Tran;
 import com.company.crm.workbench.domain.TranHistory;
 import com.company.crm.workbench.service.TranService;
 
+import java.util.List;
+
 public class TranServiceImpl implements TranService {
 
     private TranDao tranDao = SqlSessionUtil.getSqlSession().getMapper(TranDao.class);
@@ -65,6 +67,55 @@ public class TranServiceImpl implements TranService {
         int count3 = tranHistoryDao.save(th);
         if (count3 != 1){
             flag = false;
+        }
+
+        return flag;
+    }
+
+    @Override
+    public Tran deatil(String id) {
+
+        Tran t = tranDao.detail(id);
+
+        return t;
+    }
+
+    @Override
+    public List<TranHistory> getHistoryListByTranId(String tranId) {
+
+        List<TranHistory> thList = tranHistoryDao.getHistoryListByTranId(tranId);
+
+        return thList;
+    }
+
+    @Override
+    public boolean changeStage(Tran t) {
+
+        boolean flag = true;
+
+        //改变交易阶段
+        int count1 = tranDao.changeStage(t);
+        if (count1 != 1){
+
+            flag = false;
+
+        }
+
+        //交易阶段改变后，生成一条交易历史
+        TranHistory th = new TranHistory();
+        th.setId(UUIDUtil.getUUID());
+        th.setStage(t.getStage());
+        th.setMoney(t.getMoney());
+        th.setExpectedDate(t.getExpectedDate());
+        th.setCreateTime(DateTimeUtil.getSysTime());
+        th.setCreateBy(t.getEditBy());
+        th.setTranId(t.getId());
+        //添加交易历史
+        int count2 = tranHistoryDao.save(th);
+        if (count2 != 1){
+
+            flag = false;
+
         }
 
         return flag;
